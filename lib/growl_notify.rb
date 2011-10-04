@@ -1,7 +1,7 @@
 require 'appscript'
 
 class GrowlNotify
-  class ApplicationNotFound < Exception; end
+  class GrowlNotFound < Exception; end
   class << self
     include Appscript
     
@@ -29,7 +29,7 @@ class GrowlNotify
     def application
       @application = pre1_3_app
       @application ||= post1_3_app
-      throw ApplicationNotFound if @application.nil?
+      throw GrowlNotFound if @application.nil?
       @application
     end
     
