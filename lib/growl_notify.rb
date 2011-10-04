@@ -23,7 +23,7 @@ class GrowlNotify
     end
 
     def register
-      app("GrowlHelperApp").register(:all_notifications => @notifications, :as_application => @application_name, :default_notifications => @default_notifications)
+      app("Growl").register(:all_notifications => @notifications, :as_application => @application_name, :default_notifications => @default_notifications)
     end
 
     def send_notification(options= {})
@@ -33,7 +33,7 @@ class GrowlNotify
       if local_icon
         defaults.merge!(:image_from_location => local_icon)
       end
-      app("GrowlHelperApp").notify(defaults.merge(options))
+      app("Growl").notify(defaults.merge(options))
     end
     
     def very_low(options={})
