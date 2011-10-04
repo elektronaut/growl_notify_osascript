@@ -1,7 +1,6 @@
 require 'appscript'
 
 class GrowlNotify
-  
   class << self
     include Appscript
     
