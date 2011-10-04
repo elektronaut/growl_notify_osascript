@@ -1,6 +1,7 @@
 require 'appscript'
 
 class GrowlNotify
+  VERSION = "0.0.3"
   class GrowlNotFound < Exception; end
   class << self
     include Appscript
