@@ -1,7 +1,7 @@
 require 'appscript'
 
 class GrowlNotify
-  
+  class ApplicationNotFound < Exception; end
   class << self
     include Appscript
     
@@ -23,7 +23,26 @@ class GrowlNotify
     end
 
     def register
-      app("GrowlHelperApp").register(:all_notifications => @notifications, :as_application => @application_name, :default_notifications => @default_notifications)
+      application.register(:all_notifications => @notifications, :as_application => @application_name, :default_notifications => @default_notifications)
+    end
+    
+    def application
+      @application = pre1_3_app
+      @application ||= post1_3_app
+      throw ApplicationNotFound if @application.nil?
+      @application
+    end
+    
+    def pre1_3_app
+      app("GrowlHelperApp")
+    rescue FindApp::ApplicationNotFoundError
+      nil
+    end
+    
+    def post1_3_app
+      app("Growl")
+    rescue FindApp::ApplicationNotFoundError
+      nil
     end
 
     def send_notification(options= {})
@@ -33,7 +52,7 @@ class GrowlNotify
       if local_icon
         defaults.merge!(:image_from_location => local_icon)
       end
-      app("GrowlHelperApp").notify(defaults.merge(options))
+      application.notify(defaults.merge(options))
     end
     
     def very_low(options={})
