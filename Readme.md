@@ -53,7 +53,9 @@ You can also set a globally scoped icon:
 6. application_name - This is set from configs but you can override it
 7. with_name - must me one of your set default notifications by default its set to the first one
 
+#### Error Handling
 
+If the growl application is not installed on the system `GrowlNotify` will throw a `GrowlNotFound` exception.
 
 ## Author
 
