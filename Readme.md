@@ -54,7 +54,8 @@ You can also set a globally scoped icon:
 7. with_name - must me one of your set default notifications by default its set to the first one
 
 
-## Aurthor
+
+## Author
 
   GrowlNotify is written by [Scott Davis](http://sdavis.info)
   
