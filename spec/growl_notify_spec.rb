@@ -14,6 +14,23 @@ describe GrowlNotify do
     GrowlNotify.reset!
   end
   
+  context 'application not found' do
+    before do
+      GrowlNotify.stubs(:pre1_3_app).returns(nil)
+      GrowlNotify.stubs(:post1_3_app).returns(nil)
+    end
+    
+    it "should raise correct error" do
+      lambda {
+        GrowlNotify.config do |config|
+          config.notifications = config.default_notifications = ["Compass Application"]
+          config.application_name = config.notifications.first
+        end
+        GrowlNotify.normal(:title => 'GrowlNotify Spec', :description => 'This is my "normal" message').should be_nil
+      }.should raise_error GrowlNotify::GrowlNotFound
+    end
+  end
+  
   context 'default' do
     before do
       GrowlNotify.config do |config|

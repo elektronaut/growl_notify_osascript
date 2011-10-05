@@ -2,6 +2,8 @@ require 'appscript'
 
 class GrowlNotify
   VERSION = "0.0.3"
+  PRE_1_3_APP = "GrowlHelperApp"
+  POST_1_3_APP = "Growl"
   class GrowlNotFound < Exception; end
   class << self
     include Appscript
@@ -30,18 +32,18 @@ class GrowlNotify
     def application
       @application = pre1_3_app
       @application ||= post1_3_app
-      throw GrowlNotFound if @application.nil?
+      raise GrowlNotFound if @application.nil?
       @application
     end
     
     def pre1_3_app
-      app("GrowlHelperApp")
+      app(PRE_1_3_APP)
     rescue FindApp::ApplicationNotFoundError
       nil
     end
     
     def post1_3_app
-      app("Growl")
+      app(POST_1_3_APP)
     rescue FindApp::ApplicationNotFoundError
       nil
     end
