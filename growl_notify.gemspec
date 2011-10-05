@@ -20,6 +20,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.add_dependency 'rb-appscript'
   s.add_development_dependency 'rspec'
-
+  s.add_development_dependency 'guard-rspec'
   
 end
