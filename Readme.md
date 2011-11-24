@@ -1,12 +1,8 @@
-# GrowlNotify
+# GrowlNotifyOsascript
 
-This gem is based on the rb-appscript bindings to applescript
+This is a fork of Scott Davis' excellent [GrowlNotify gem](https://github.com/scottdavis/growl_notify).
 
-Benefits over all other growl gems:
-
-1. The user doesn't need to do anything but install the gem - no growl settings need to be changed and `growlnotify` cli doesn't need to be installed
-2. Thats about it
-
+The original is based on the rb-appscript bindings to Applescript, which unfortunately doesn't support Kernel::fork. This gem uses Applescript piped through the osascript utility instead.
 
 ## Usage
 
