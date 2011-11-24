@@ -61,6 +61,8 @@ If the growl application is not installed on the system `GrowlNotify` will throw
   
   [Twitter](http://twitter.com/jetviper21)
 
+	GrowlNotifyOsascript was hacked together by [Inge Jørgensen][http://elektronaut.no]
+
 ## Copyright
 
 Copyright (c) 2011 Scott Davis. See LICENSE.txt for further details.
