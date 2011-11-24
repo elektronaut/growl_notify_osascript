@@ -1,12 +1,11 @@
-require 'appscript'
+# encoding: utf-8
+
+require 'open3'
 
 class GrowlNotify
-  VERSION = "0.0.3"
-  PRE_1_3_APP = "GrowlHelperApp"
-  POST_1_3_APP = "Growl"
+  VERSION = "0.0.1"
   class GrowlNotFound < Exception; end
   class << self
-    include Appscript
     
     attr_accessor :application_name, :default_notifications, :notifications, :icon
     @application_name = "Ruby Growl"
@@ -18,6 +17,19 @@ class GrowlNotify
       block.call(self)
       register
     end
+    
+    def escape(string)
+      '"' + string.to_s.gsub('"', '\"') + '"'
+    end
+
+    def run_script(script)
+  	  output = Open3.popen3('osascript') do |i, o, ts|
+  	    i.puts script
+  	    i.close
+  	    o.gets
+	    end
+      output ? output.strip : nil
+    end
 
     def reset!
       [:application_name, :default_notifications, :notifications, :icon].each do |meth|
@@ -25,37 +37,58 @@ class GrowlNotify
       end
     end
 
+    def to_applescript(hash)
+      hash.map do |key, value|
+        unless value.nil?
+          name = key.to_s.gsub('_', ' ')
+          if value.kind_of?(Array)
+            "#{name} {" + value.map{|v| escape(v)}.join(', ') + "}" 
+          else
+            "#{name} " + escape(value)
+          end
+        end
+      end.compact.join(' ')
+    end
+
     def register
-      application.register(:all_notifications => @notifications, :as_application => @application_name, :default_notifications => @default_notifications)
+      raise GrowlNotFound unless running?
+      
+      script = "tell application id \"com.Growl.GrowlHelperApp\"\n" + 
+               "register " +
+               to_applescript(
+                 :as_application => @application_name,
+                 :all_notifications => @notifications,
+                 :default_notifications => @default_notifications
+               ) + 
+               "\nend tell"
+               
+      run_script(script)
     end
     
-    def application
-      @application = pre1_3_app
-      @application ||= post1_3_app
-      raise GrowlNotFound if @application.nil?
-      @application
-    end
-    
-    def pre1_3_app
-      app(PRE_1_3_APP)
-    rescue FindApp::ApplicationNotFoundError
-      nil
-    end
-    
-    def post1_3_app
-      app(POST_1_3_APP)
-    rescue FindApp::ApplicationNotFoundError
-      nil
+    def running?
+      script = "tell application \"System Events\"\n" +
+      	       "set isRunning to count of (every process whose bundle identifier is \"com.Growl.GrowlHelperApp\") > 0\n" +
+               "end tell"
+      run_script(script) == 'true'
     end
 
     def send_notification(options= {})
+      raise GrowlNotFound unless running?
       defaults = {:title => 'no title', :application_name => @application_name, :description => 'no description', :sticky => false, :priority => 0, :with_name => notifications.first}
       local_icon = @icon
       local_icon = options.delete(:icon) if options.include?(:icon)
       if local_icon
         defaults.merge!(:image_from_location => local_icon)
       end
-      application.notify(defaults.merge(options))
+      
+      opts = defaults.merge(options)
+      
+      script = "tell application id \"com.Growl.GrowlHelperApp\"\n" + 
+               "notify " +
+               to_applescript(opts) +
+               "\nend tell"
+      
+      run_script(script)
     end
     
     def very_low(options={})

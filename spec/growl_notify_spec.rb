@@ -16,8 +16,7 @@ describe GrowlNotify do
   
   context 'application not found' do
     before do
-      GrowlNotify.stubs(:pre1_3_app).returns(nil)
-      GrowlNotify.stubs(:post1_3_app).returns(nil)
+      GrowlNotify.stubs(:running?).returns(false)
     end
     
     it "should raise correct error" do
