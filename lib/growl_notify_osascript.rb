@@ -23,11 +23,11 @@ class GrowlNotifyOsascript
     end
 
     def run_script(script)
-  	  output = Open3.popen3('osascript') do |i, o, ts|
-  	    i.puts script
-  	    i.close
-  	    o.gets
-	    end
+      output = Open3.popen3('osascript') do |i, o, ts|
+        i.puts script
+        i.close
+        o.gets
+      end
       output ? output.strip : nil
     end
 
@@ -67,7 +67,7 @@ class GrowlNotifyOsascript
     
     def running?
       script = "tell application \"System Events\"\n" +
-      	       "set isRunning to count of (every process whose bundle identifier is \"com.Growl.GrowlHelperApp\") > 0\n" +
+               "set isRunning to count of (every process whose bundle identifier is \"com.Growl.GrowlHelperApp\") > 0\n" +
                "end tell"
       run_script(script) == 'true'
     end
